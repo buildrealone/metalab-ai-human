@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <title>Metalab - AI Human</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <script src="https://londonpark.xyz/aframe-1.3.0-london-v2.js"></script>
+    <script src="https://londonpark.xyz/extras.js"></script>
+    <script src="https://londonpark.xyz/particle.js"></script>
+    <script src="https://londonpark.xyz/random-move.js"></script>
+  </head>
+
+  <body>
+    <a-scene
+      loading-screen="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+      vr-mode-ui="enabled: false">
+
+      <a-assets>
+        <video id="videoId" src="./docent_v1.mp4" playsinline loop="true"></video>
+        <a-asset-item id="main-character" src="assets/models/little-trex/scene.gltf"></a-asset-item>
+        <a-mixin 
+          id="little-trex"
+          scale="1.5 1.5 1.5" 
+          rotation="0 180 0" 
+          shadow="cast: true;"
+          position="0 0 0"
+        ></a-mixin>
+      </a-assets>
+
+      <a-sky color="#000000"></a-sky>
+
+      <a-camera animation="property: position; from: 0 1.7 40; to: 0 1.7 0; dur: 2000;"></a-camera>
+
+      <a-entity position="0 0.5 -15" particle-system="preset: dust; particleCount: 6000; color: #79e8c8; size:1.5"></a-entity>
+
+      <a-entity
+        material="shader: transparent-video; src: #videoId"
+        geometry="primitive: plane; width: 4; height: 6"
+        position="2.7 2 -10">
+      </a-entity>
+
+      <a-entity
+        id="character"
+        gltf-model="#main-character"
+        animation-mixer="clip: run; loop: repeat; crossFadeDuration: 0.4;"
+        scale="2 2 2"
+        rotation="0 45 0"
+        position="-1.5 0.2 -6">
+      </a-entity>
+
+      <!-- font="custom-msdf.json" 
+      font-image="custom-msdf.png"  -->
+      <a-text 
+        value="AI Docent by Metalab"
+        color="white" 
+        scale="3 3 3" 
+        position="-3.3 8 -10">
+      </a-text>
+
+    </a-scene>
+    <script>
+        document.addEventListener('click', () => {
+            let video = document.querySelector('video');
+            video.play();
+        });
+
+        AFRAME.registerShader('transparent-video', {
+            schema: {
+                src: { type: 'map' },
+            },
+
+            init: function (data) {
+                const videoTexture = new THREE.VideoTexture(data.src);
+                videoTexture.format = THREE.RGBAFormat;
+                data.transparent = true;
+
+                this.material = new THREE.MeshBasicMaterial({
+                map: videoTexture, transparent: true,
+                });
+            },
+        });
+    </script>
+  </body>
+</html>
